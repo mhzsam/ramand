@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Dapper;
 using Infrastructure.Repository;
 using Infrastructure.Repository.Interface;
+using Infrustracture.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Infrastructure.DIRegister
         {
             services.AddSingleton<DapperContext>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddSingleton<EncryptionUtility>();
 
         }
     }

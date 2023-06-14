@@ -21,6 +21,10 @@ namespace API.Controllers
         public async Task<IActionResult> Login(UserLogin userLogin)
         {
            var res=await _authenticateService.Login(userLogin);
+            if(res==null)
+            {
+                return BadRequest();
+            }
             return Ok(res);
         }
   

@@ -9,12 +9,16 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using API;
 using Swashbuckle.AspNetCore.Swagger;
+using Infrustracture.Models;
+using SharedClass;
+using Application.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 builder.Services.AddApiVersioning(o=>{
     o.AssumeDefaultVersionWhenUnspecified = true;
     o.DefaultApiVersion = new ApiVersion(1, 0);
@@ -34,12 +38,42 @@ builder.Services.AddEndpointsApiExplorer();
 
 // نمونه جای صحیح که چند تا اینجکت از جای دیگه می شود 
 builder.Services.AddInfrastractureDI();
-
+builder.Services.Configure<Configs>(builder.Configuration.GetSection("Configs"));
+builder.Services.AddJWT();
 //به خاطر کمبود وقت اینجا نوشتم 
 builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
     var swaggerOptions = new API.SwaggerOptions();
     builder.Configuration.GetSection("Swagger").Bind(swaggerOptions);
+    
+    swaggerGenOptions.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        },
+        Scheme = "Bearer",
+        Name = "Authorization",
+
+        In = ParameterLocation.Header,
+    });
+
+    swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] { }
+                }
+                });
+
+
 
     foreach (var currentVersion in swaggerOptions.Versions)
     {
@@ -72,6 +106,11 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
 
 
 builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
+builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqConfiguration"));
+builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
+builder.Services.AddScoped<IRabbitService, RabbitService>();
+
+
 
 var app = builder.Build();
 
@@ -91,7 +130,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

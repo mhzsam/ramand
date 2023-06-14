@@ -48,5 +48,12 @@ namespace Infrastructure.Repository
 
             return user;
         }
+
+        public async Task<bool> UpdateUserToken(int userId, string token)
+        {
+            var query = $"UPDATE dbo.Users SET Token='{token}' WHERE Id={userId}";
+            var result = await dbConnection.ExecuteAsync(query);
+            return result>0;
+        }
     }
 }

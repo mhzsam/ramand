@@ -11,5 +11,7 @@ namespace Infrastructure.Repository.Interface
     {
         Task<User> GetByUsername(string username);
         Task<List<User>> GetAll();
+        Task<bool> UpdateUserToken(int userId, string token);
+
     }
 }
