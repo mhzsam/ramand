@@ -1,4 +1,5 @@
-﻿using Infrustracture.Models;
+﻿
+using Infrustracture.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -21,7 +22,7 @@ namespace Infrustracture.Utility
             this.configs = options.Value;
         }
         
-        public string GetNewToken(int userId)
+        public virtual string GetNewToken(int userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(configs.TokenKey);

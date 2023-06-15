@@ -23,7 +23,7 @@ using System.Threading.Channels;
     _channel = _connection.CreateModel();    
     _channel.QueueDeclare("test-consumed", true, false, false, null);
     _channel.ExchangeDeclare("dlx_exchange", ExchangeType.Direct);
-    _channel.QueueBind("test", "dlx_exchange", "consumed_key", null);
+    _channel.QueueBind("test", "dlx_exchange", "test-consumed", null);
 
     var consumer = new EventingBasicConsumer(_channel);
     consumer.Received += (sender, args) =>

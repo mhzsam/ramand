@@ -2,6 +2,7 @@
 
 using Application.DTO;
 using Infrastructure.Repository.Interface;
+
 using Infrustracture.Utility;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace Application.Services
             if (findUser.Password == user.Password)
             {
                 var token= _encryptionUtility.GetNewToken(findUser.Id);
-                var res=await _userRepository.UpdateUserToken(findUser.Id, token);
+                var res = await _userRepository.UpdateUserToken(findUser.Id, token);
                 if(res)
                 return token;
                 return null;
